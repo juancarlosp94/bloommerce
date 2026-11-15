@@ -1,0 +1,40 @@
+
+# Java / Spring Boot
+**/target/
+*.class
+*.jar
+*.war
+*.log
+!**/.mvn/wrapper/maven-wrapper.jar
+
+# Node.js / React
+**/node_modules/
+**/dist/
+**/build/
+**/coverage/
+*.tsbuildinfo
+
+# Environment variables
+.env
+.env.*
+!.env.example
+!**/.env.example
+!**/.env.*.example
+
+# IDEs
+.idea/
+*.iml
+.vscode/
+.project
+.classpath
+.settings/
+
+# Operating systems
+.DS_Store
+Thumbs.db
+
+# Local logs and temporary files
+logs/
+*.tmp
+*.swp
+  
