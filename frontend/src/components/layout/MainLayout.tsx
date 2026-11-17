@@ -1,10 +1,12 @@
 
 import { Link, NavLink, Outlet, useNavigate } from "react-router";
 import { useAuth } from "../../hooks/useAuth";
+import { useCart } from "../../hooks/useCart";
 
 export default function MainLayout() {
   const { user, isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
+  const { itemCount } = useCart();
 
   function handleLogout() {
     logout();
@@ -28,6 +30,10 @@ export default function MainLayout() {
               Products
             </NavLink>
 
+            <NavLink to="/cart" className="hover:text-violet-700">
+              Cart ({itemCount})
+            </NavLink>
+
             {isAuthenticated ? (
               <>
                 <NavLink
@@ -35,6 +41,13 @@ export default function MainLayout() {
                   className="hover:text-violet-700"
                 >
                   {user?.firstName ?? "Account"}
+                </NavLink>
+
+                <NavLink
+                  to="/orders"
+                  className="hover:text-violet-700"
+                >
+                  My Orders
                 </NavLink>
 
                 <button

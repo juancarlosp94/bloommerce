@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router";
 
+import { useCart } from "../hooks/useCart";
 import { getProductById } from "../api/products";
 import { ApiError } from "../api/http";
 
@@ -86,6 +87,9 @@ export default function ProductDetailPage() {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const { addItem } = useCart();
+  const [addedToCart, setAddedToCart] = useState(false);
 
   const productId = Number(id);
   const validId =
@@ -255,16 +259,25 @@ export default function ProductDetailPage() {
 
           <button
             type="button"
-            disabled
-            title="Shopping cart functionality is coming in Issue #16"
-            className="mt-8 w-full cursor-not-allowed rounded-xl bg-violet-700 px-6 py-4 font-semibold text-white opacity-60 sm:w-auto"
+            disabled={!product.active || !inStock}
+            onClick={() => {
+              addItem(product);
+              setAddedToCart(true);
+            }}
+            className="mt-8 w-full rounded-xl bg-violet-700 px-6 py-4 font-semibold text-white hover:bg-violet-800 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
           >
-            {inStock ? "Add to Cart — Coming Soon" : "Out of Stock"}
+            {inStock ? "Add to Cart" : "Out of Stock"}
           </button>
 
-          <p className="mt-2 text-xs text-gray-500">
-            Shopping cart functionality will be available in a later update.
-          </p>
+          {addedToCart && (
+            <p role="status" className="mt-3 text-sm text-green-700">
+              Added to cart!{" "}
+              <Link to="/cart" className="font-semibold underline">
+                View cart
+              </Link>
+            </p>
+          )}
+
         </div>
       </div>
 
