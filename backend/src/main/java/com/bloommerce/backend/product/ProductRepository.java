@@ -12,6 +12,8 @@ public interface ProductRepository extends
 
     Optional<Product> findByIdAndActiveTrue(Long id);
 
+    Optional<Product> findBySku(String sku);
+
     boolean existsBySku(String sku);
 
     boolean existsBySkuAndIdNot(String sku, Long id);
