@@ -3,6 +3,7 @@ package com.bloommerce.backend.product;
 
 import com.bloommerce.backend.product.dto.ProductRequest;
 import com.bloommerce.backend.product.dto.ProductResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -45,6 +46,7 @@ public class ProductController {
         return productService.findById(id);
     }
 
+    @SecurityRequirement(name = "bearerAuth")
     @PostMapping
     public ResponseEntity<ProductResponse> create(
         @Valid @RequestBody ProductRequest request
@@ -56,6 +58,7 @@ public class ProductController {
             .body(product);
     }
 
+    @SecurityRequirement(name = "bearerAuth")
     @PutMapping("/{id}")
     public ProductResponse update(
         @PathVariable Long id,
@@ -64,6 +67,7 @@ public class ProductController {
         return productService.update(id, request);
     }
 
+    @SecurityRequirement(name = "bearerAuth")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         productService.delete(id);
