@@ -1,52 +1,74 @@
 
-import { Link, NavLink, Outlet } from "react-router";
+import { Link, NavLink, Outlet, useNavigate } from "react-router";
+import { useAuth } from "../../hooks/useAuth";
 
 export default function MainLayout() {
+  const { user, isAuthenticated, logout } = useAuth();
+  const navigate = useNavigate();
+
+  function handleLogout() {
+    logout();
+    navigate("/", { replace: true });
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="border-b border-gray-200 bg-white">
-        <nav className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-5">
-          <Link
-            to="/"
-            className="text-2xl font-extrabold tracking-tight text-violet-700"
-          >
+        <nav className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-6 px-6 py-5">
+          <Link to="/" className="text-2xl font-bold text-violet-700">
             Bloommerce
           </Link>
 
-          <div className="flex items-center gap-6 text-sm font-medium">
-            <NavLink
-              to="/"
-              end
-              className={({ isActive }) =>
-                isActive
-                  ? "text-violet-700"
-                  : "text-gray-600 hover:text-violet-700"
-              }
-            >
+          <div className="flex flex-wrap items-center gap-5">
+            <NavLink to="/" className="hover:text-violet-700">
               Home
             </NavLink>
 
-            <NavLink
-              to="/products"
-              className={({ isActive }) =>
-                isActive
-                  ? "text-violet-700"
-                  : "text-gray-600 hover:text-violet-700"
-              }
-            >
+            <NavLink to="/products" className="hover:text-violet-700">
               Products
             </NavLink>
 
-            <span className="text-gray-400">
-              Cart
-            </span>
+            {isAuthenticated ? (
+              <>
+                <NavLink
+                  to="/account"
+                  className="hover:text-violet-700"
+                >
+                  {user?.firstName ?? "Account"}
+                </NavLink>
+
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="rounded-lg border px-4 py-2 hover:bg-gray-100"
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <>
+                <NavLink
+                  to="/login"
+                  className="hover:text-violet-700"
+                >
+                  Login
+                </NavLink>
+
+                <Link
+                  to="/register"
+                  className="rounded-lg bg-violet-700 px-4 py-2 text-white"
+                >
+                  Register
+                </Link>
+              </>
+            )}
           </div>
         </nav>
       </header>
 
-      <main className="mx-auto max-w-6xl px-6">
+      <div className="mx-auto max-w-6xl px-6">
         <Outlet />
-      </main>
+      </div>
     </div>
   );
 }
