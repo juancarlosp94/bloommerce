@@ -18,6 +18,12 @@ import org.springframework.security.oauth2.jwt.*;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.bloommerce.backend.product.Product;
+import com.bloommerce.backend.product.ElectronicsProduct;
+import com.bloommerce.backend.product.ProductRepository;
+
+import java.math.BigDecimal;
+
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -48,6 +54,9 @@ class SecurityIntegrationTest {
     private UserRepository userRepository;
 
     @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Autowired
@@ -73,6 +82,33 @@ class SecurityIntegrationTest {
 
         return userRepository.saveAndFlush(user);
     }
+
+
+    private Product createOrderTestProduct(int stock) {
+        ElectronicsProduct product = new ElectronicsProduct(
+            "ORDER-TEST-" + UUID.randomUUID(),
+            "Order Test Laptop",
+            "Electronics",
+            new BigDecimal("150.00"),
+            stock
+        );
+
+        return productRepository.saveAndFlush(product);
+    }
+
+    private String orderRequestJson(Long productId, int quantity) {
+        return """
+            {
+              "items": [
+                {
+                  "productId": %d,
+                  "quantity": %d
+                }
+              ]
+            }
+            """.formatted(productId, quantity);
+    }
+
 
     private String tokenFor(User user) {
         Instant now = Instant.now();
@@ -128,6 +164,139 @@ class SecurityIntegrationTest {
                 }
                 """.formatted("TEST-" + UUID.randomUUID());
     }
+
+
+    @Test
+    void shouldRejectAnonymousCheckout() throws Exception {
+        mockMvc.perform(post("/api/orders")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                            {
+                              "items": [
+                                {
+                                  "productId": 1,
+                                  "quantity": 1
+                                }
+                              ]
+                            }
+                            """))
+            .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void shouldRejectAnonymousOrderHistory() throws Exception {
+        mockMvc.perform(get("/api/orders"))
+            .andExpect(status().isUnauthorized());
+
+        mockMvc.perform(get("/api/orders/1"))
+            .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void shouldAllowAuthenticatedCustomerCheckout() throws Exception {
+        User customer = createUser(UserRole.CUSTOMER, true);
+        Product product = createOrderTestProduct(10);
+
+        mockMvc.perform(post("/api/orders")
+                .header(
+                    "Authorization",
+                    "Bearer " + tokenFor(customer)
+                )
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(orderRequestJson(product.getId(), 2)))
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.id").exists())
+            .andExpect(jsonPath("$.status").value("CONFIRMED"))
+            .andExpect(jsonPath("$.totalAmount").value(300.00))
+            .andExpect(jsonPath("$.items.length()").value(1))
+            .andExpect(jsonPath("$.items[0].quantity").value(2))
+            .andExpect(jsonPath("$.items[0].unitPrice").value(150.00));
+
+        assertEquals(
+            8,
+            productRepository.findById(product.getId())
+                .orElseThrow()
+                .getStockQuantity()
+        );
+    }
+
+    @Test
+    void shouldAllowCustomerToViewOwnOrders() throws Exception {
+        User customer = createUser(UserRole.CUSTOMER, true);
+        Product product = createOrderTestProduct(10);
+
+        String authorization = "Bearer " + tokenFor(customer);
+
+        String response = mockMvc.perform(post("/api/orders")
+                .header("Authorization", authorization)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(orderRequestJson(product.getId(), 1)))
+            .andExpect(status().isCreated())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+        Number orderId = com.jayway.jsonpath.JsonPath.read(
+            response,
+            "$.id"
+        );
+
+        mockMvc.perform(get("/api/orders/" + orderId.longValue())
+                .header("Authorization", authorization))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id").value(orderId.longValue()))
+            .andExpect(jsonPath("$.totalAmount").value(150.00));
+
+        mockMvc.perform(get("/api/orders")
+                .header("Authorization", authorization))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.content.length()").value(1))
+            .andExpect(jsonPath("$.content[0].id")
+                .value(orderId.longValue()));
+    }
+
+    @Test
+    void shouldPreventViewingAnotherCustomersOrder() throws Exception {
+        User owner = createUser(UserRole.CUSTOMER, true);
+        User otherCustomer = createUser(UserRole.CUSTOMER, true);
+        Product product = createOrderTestProduct(10);
+
+        String response = mockMvc.perform(post("/api/orders")
+                .header(
+                    "Authorization",
+                    "Bearer " + tokenFor(owner)
+                )
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(orderRequestJson(product.getId(), 1)))
+            .andExpect(status().isCreated())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+        Number orderId = com.jayway.jsonpath.JsonPath.read(
+            response,
+            "$.id"
+        );
+
+        String otherCustomerAuthorization =
+            "Bearer " + tokenFor(otherCustomer);
+
+        mockMvc.perform(get("/api/orders/" + orderId.longValue())
+                .header(
+                    "Authorization",
+                    otherCustomerAuthorization
+                ))
+            .andExpect(status().isNotFound());
+
+        mockMvc.perform(get("/api/orders")
+                .header(
+                    "Authorization",
+                    otherCustomerAuthorization
+                ))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.content").isEmpty());
+    }
+
 
     @Test
     void shouldAllowPublicProductBrowsing() throws Exception {
