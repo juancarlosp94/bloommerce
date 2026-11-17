@@ -9,6 +9,7 @@ import { getProductById } from "../api/products";
 import { ApiError } from "../api/http";
 
 import type { Product } from "../types/product";
+import CartProvider from "../context/CartProvider";
 
 vi.mock("../api/products", () => ({
   getProductById: vi.fn(),
@@ -56,18 +57,20 @@ const clothing: Product = {
 
 function renderDetail(initialUrl = "/products/1") {
   return render(
-    <MemoryRouter initialEntries={[initialUrl]}>
-      <Routes>
-        <Route
-          path="/products/:id"
-          element={<ProductDetailPage />}
-        />
-        <Route
-          path="/products"
-          element={<div>Back at catalog</div>}
-        />
-      </Routes>
-    </MemoryRouter>,
+    <CartProvider>
+      <MemoryRouter initialEntries={[initialUrl]}>
+        <Routes>
+          <Route
+            path="/products/:id"
+            element={<ProductDetailPage />}
+          />
+          <Route
+            path="/products"
+            element={<div>Back at catalog</div>}
+          />
+        </Routes>
+      </MemoryRouter>
+    </CartProvider>
   );
 }
 

@@ -8,7 +8,9 @@ C:\USERS\AHT COLOMBIA - NUC 3\DOCUMENTS\PROJECTS\BLOOMMERCE-PROJECT\BLOOMMERCE\F
 |   
 +---api
 |       auth.ts
+|       http.test.ts
 |       http.ts
+|       orders.ts
 |       products.test.ts
 |       products.ts
 |       
@@ -36,25 +38,37 @@ C:\USERS\AHT COLOMBIA - NUC 3\DOCUMENTS\PROJECTS\BLOOMMERCE-PROJECT\BLOOMMERCE\F
 |       AuthContext.ts
 |       AuthProvider.test.tsx
 |       AuthProvider.tsx
+|       CartContext.ts
+|       CartProvider.tsx
 |       
 +---hooks
 |       useAuth.ts
+|       useCart.ts
 |       
 +---lib
 |       api.ts
 |       
 +---pages
+|       AccountPage.tsx
+|       CartPage.tsx
+|       CheckoutPage.tsx
+|       ForbiddenPage.tsx
 |       HomePage.tsx
+|       LoginPage.tsx
 |       NotFoundPage.tsx
+|       OrderConfirmationPage.tsx
 |       ProductCatalogPage.test.tsx
 |       ProductCatalogPage.tsx
 |       ProductDetailPage.test.tsx
 |       ProductDetailPage.tsx
+|       RegisterPage.tsx
 |       
 +---test
 |       setup.ts
 |       
 \---types
         auth.ts
+        cart.ts
+        order.ts
         product.ts
         
