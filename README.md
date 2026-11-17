@@ -69,3 +69,45 @@ Development tasks and progress are tracked using GitHub Issues and GitHub Projec
 Each task follows:
 
 **Issue → Branch → Implementation → Testing → Pull Request → Merge**
+
+## Backend Development
+
+The Bloommerce backend is implemented using Java 21, Spring Boot 4, and Maven.
+
+### Requirements
+
+- Java 21
+- Maven Wrapper (included in the backend project)
+- PostgreSQL (required to run the application)
+
+### Compile the Backend
+
+From the repository root:
+
+```bash
+cd backend
+./mvnw clean compile
+```
+
+### Run the Backend
+
+Once PostgreSQL is configured, provide the required environment variables and run:
+
+```bash
+./mvnw spring-boot:run
+```
+
+The application uses the `dev` profile by default.
+
+### API Documentation
+
+Swagger/OpenAPI is included in the backend dependencies. Once the application is running and the appropriate security configuration is in place, the API documentation will be accessible at:
+
+- `/swagger-ui.html`
+- `/v3/api-docs`
+
+### Testing
+
+The backend uses JUnit, Mockito, MockMvc, and JaCoCo.
+
+Automated integration testing against PostgreSQL will be configured in a later development phase.
