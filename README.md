@@ -258,3 +258,51 @@ docker compose down
 ```
 
 This stops the container while preserving the database volume.
+
+## Authentication
+
+Bloommerce uses Spring Security with JWT-based authentication.
+
+Users can register, log in, and retrieve their authenticated
+profile. Public registration always creates a CUSTOMER account.
+
+Administrators have permission to create, update, and
+soft-delete products.
+
+### Configuration
+
+Generate a signing key:
+
+```bash
+openssl rand -base64 32
+```
+
+Add the generated value to the root `.env`:
+
+```dotenv
+JWT_SECRET=your_generated_base64_secret
+```
+
+Export environment variables before starting the backend:
+
+```bash
+set -a
+source .env
+set +a
+
+cd backend
+./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
+```
+
+### API Endpoints
+
+- POST `/api/auth/register`
+- POST `/api/auth/login`
+- GET `/api/auth/me`
+
+Access the Swagger documentation at:
+
+http://localhost:8080/swagger-ui/index.html
+
+For request examples, authorization rules, and security details,
+see [Authentication Documentation](docs/authentication.md).
