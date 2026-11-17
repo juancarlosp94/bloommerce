@@ -190,9 +190,9 @@ describe("ProductCatalogPage", () => {
 
     await screen.findByText("Gaming Laptop");
 
-    await user.type(
-      screen.getByRole("textbox", { name: "Category" }),
-      "Electronics",
+    await user.selectOptions(
+      screen.getByRole("combobox", { name: "Category" }),
+      "Laptops",
     );
 
     await user.type(
@@ -223,7 +223,7 @@ describe("ProductCatalogPage", () => {
     await waitFor(() => {
       expect(mockedGetProducts).toHaveBeenLastCalledWith(
         expect.objectContaining({
-          category: "Electronics",
+          category: "Laptops",
           minPrice: 500,
           maxPrice: 2000,
           sort: "price,asc",

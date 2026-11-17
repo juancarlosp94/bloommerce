@@ -1,0 +1,60 @@
+Folder PATH listing
+Volume serial number is DA22-315B
+C:\USERS\AHT COLOMBIA - NUC 3\DOCUMENTS\PROJECTS\BLOOMMERCE-PROJECT\BLOOMMERCE\FRONTEND\SRC
+|   App.css
+|   App.tsx
+|   index.css
+|   main.tsx
+|   
++---api
+|       auth.ts
+|       http.ts
+|       products.test.ts
+|       products.ts
+|       
++---assets
+|       hero.png
+|       react.svg
+|       vite.svg
+|       
++---components
+|   +---auth
+|   |       ProtectedRoute.test.tsx
+|   |       ProtectedRoute.tsx
+|   |       
+|   +---layout
+|   |       MainLayout.tsx
+|   |       
+|   \---products
+|           Pagination.tsx
+|           ProductCard.test.tsx
+|           ProductCard.tsx
+|           ProductFilters.tsx
+|           ProductSearch.tsx
+|           
++---context
+|       AuthContext.ts
+|       AuthProvider.test.tsx
+|       AuthProvider.tsx
+|       
++---hooks
+|       useAuth.ts
+|       
++---lib
+|       api.ts
+|       
++---pages
+|       HomePage.tsx
+|       NotFoundPage.tsx
+|       ProductCatalogPage.test.tsx
+|       ProductCatalogPage.tsx
+|       ProductDetailPage.test.tsx
+|       ProductDetailPage.tsx
+|       
++---test
+|       setup.ts
+|       
+\---types
+        auth.ts
+        product.ts
+        

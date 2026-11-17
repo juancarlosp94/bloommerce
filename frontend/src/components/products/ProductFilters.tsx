@@ -52,15 +52,27 @@ export default function ProductFilters({
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <label className="flex flex-col gap-2 text-sm font-medium text-gray-700">
           Category
-          <input
-            type="text"
+          <select
             value={values.category}
             onChange={(event) =>
               setValues({ ...values, category: event.target.value })
             }
-            placeholder="e.g. Electronics"
-            className="rounded-lg border border-gray-300 px-3 py-2"
-          />
+            className="rounded-lg border border-gray-300 bg-white px-3 py-2"
+          >
+            <option value="">All categories</option>
+
+            <optgroup label="Electronics">
+              <option value="Laptops">Laptops</option>
+              <option value="Smartphones">Smartphones</option>
+              <option value="Accessories">Accessories</option>
+            </optgroup>
+
+            <optgroup label="Clothing">
+              <option value="T-Shirts">T-Shirts</option>
+              <option value="Jeans">Jeans</option>
+              <option value="Jackets">Jackets</option>
+            </optgroup>
+          </select>
         </label>
 
         <label className="flex flex-col gap-2 text-sm font-medium text-gray-700">
