@@ -23,11 +23,11 @@ Represents a registered account in Bloommerce.
 | lastName | String | Required |
 | email | String | Required, unique |
 | passwordHash | String | Required |
-| phoneNumber | String | Optional |
-| role | Role (enum) | Required |
+| phone | String | Optional |
+| role | UserRole (enum) | Required |
 | active | Boolean | Required, defaults to true |
-| createdAt | Instant | Required |
-| updatedAt | Instant | Required |
+| createdAt | OffsetDateTime | Required |
+| updatedAt | OffsetDateTime | Required |
 
 **Responsibilities**
 
@@ -56,8 +56,8 @@ Represents a sellable item in the Bloommerce catalog.
 | price | BigDecimal | Required, nonnegative |
 | stockQuantity | Integer | Required, nonnegative |
 | active | Boolean | Required, defaults to true |
-| createdAt | Instant | Required |
-| updatedAt | Instant | Required |
+| createdAt | OffsetDateTime | Required |
+| updatedAt | OffsetDateTime | Required |
 
 **Responsibilities**
 
@@ -81,13 +81,13 @@ Specialized attributes:
 
 - powerConsumptionWatts: BigDecimal (optional)
 - warrantyMonths: Integer (optional)
-- voltage: String (optional)
+- voltage: Integer (optional)
 
 **ClothingProduct**
 
 Specialized attributes:
 
-- fabricMaterial: String (optional)
+- fabric: String (optional)
 - size: String (optional)
 - color: String (optional)
 
@@ -111,7 +111,7 @@ Represents a purchase created by an authenticated user.
 | user | User | Required, many-to-one |
 | totalAmount | BigDecimal | Required, nonnegative |
 | status | OrderStatus (enum) | Required |
-| createdAt | Instant | Required |
+| createdAt | OffsetDateTime | Required |
 
 **Responsibilities**
 

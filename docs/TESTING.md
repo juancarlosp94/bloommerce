@@ -21,7 +21,7 @@ Run backend tests and coverage verification:
 
 ```bash
 cd backend
-mvn clean verify
+./mvnw clean verify
 ```
 
 JaCoCo enforces a minimum of 80% line coverage.
@@ -72,6 +72,7 @@ npm run build
 
 Frontend tests cover authentication, catalog interactions,
 shopping cart, checkout, confirmation, and order history.
+The current suite includes 62 automated tests, as measured during Issue #17.
 
 ## Continuous Integration
 
@@ -113,14 +114,10 @@ automated browser test.
   but not every possible database contention scenario.
 ```
 
-After saving, run:
+## Known Limitations
 
-```bash
-git add docs/TESTING.md
-git commit -m "docs: document automated testing strategy"
-git push
-```
-
-This will automatically trigger CI again on PR #26.
-
-**Once that passes, we'll review the issue's acceptance checklist and decide whether PR #26 is ready to merge.**
+- End-to-end browser testing is not yet automated.
+- JaCoCo measures backend code coverage, not frontend coverage.
+- Coverage percentage alone does not guarantee correctness.
+- Concurrency testing covers competing checkouts for limited stock,
+  but not every possible database contention scenario.

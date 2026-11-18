@@ -8,7 +8,7 @@ erDiagram
     direction TB
 
     USERS ||--o{ ORDERS : places
-    ORDERS ||--|{ ORDER_ITEMS : contains
+    ORDERS ||--o{ ORDER_ITEMS : contains
     PRODUCTS ||--o{ ORDER_ITEMS : purchased_as
 
     USERS {
@@ -17,7 +17,7 @@ erDiagram
         varchar last_name
         varchar email UK
         varchar password_hash
-        varchar phone_number
+        varchar phone
         varchar role
         boolean active
         timestamptz created_at
@@ -38,8 +38,8 @@ erDiagram
         boolean active
         numeric power_consumption_watts
         int warranty_months
-        varchar voltage
-        varchar fabric_material
+        int voltage
+        varchar fabric
         varchar size
         varchar color
         timestamptz created_at
