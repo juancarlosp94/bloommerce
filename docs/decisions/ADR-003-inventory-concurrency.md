@@ -21,9 +21,20 @@ The backend will verify current availability when the customer submits an order.
 
 ## Selected Concurrency Strategy
 
-Use an atomic conditional update to deduct stock only when enough inventory remains.
+Bloommerce combines pessimistic row-level locking with atomic conditional inventory updates.
 
-Conceptual SQL:
+During checkout, the backend:
+
+1. Validates the authenticated customer and requested cart items.
+2. Merges duplicate product IDs.
+3. Sorts product IDs in ascending order.
+4. Retrieves and locks active products using `findActiveByIdForUpdate()`.
+5. Captures purchase-time prices.
+6. Deducts inventory using conditional updates.
+7. Creates the order and associated order items.
+8. Commits the transaction only when all operations succeed.
+
+The conditional stock deduction follows this SQL pattern:
 
 ```sql
 UPDATE products
@@ -33,12 +44,21 @@ WHERE id = :productId
   AND stock_quantity >= :quantity;
 ```
 
-The operation returns the number of affected rows.
+If the update affects zero rows, checkout fails with an inventory conflict and the transaction rolls back.
 
-- **1 row affected:** Inventory deduction succeeded.
-- **0 rows affected:** The product does not satisfy the required conditions.
+### Why Combine Both Mechanisms?
 
-The checkout service must handle unsuccessful deductions appropriately.
+Pessimistic locking coordinates concurrent access to product records, while conditional stock deductions independently verify that sufficient inventory remains at update time.
+
+Processing products in ascending ID order also helps reduce deadlock risk when multiple orders involve overlapping products.
+
+### Tradeoffs
+
+This strategy prioritizes inventory consistency over maximum concurrency.
+
+Transactions competing for the same products may experience lock contention, but the implementation prevents successful purchases from exceeding available inventory.
+
+The shopping cart does not reserve stock. Availability is validated when checkout occurs.
 
 ## Transaction Management
 
@@ -57,12 +77,6 @@ If any required operation fails, all inventory deductions and order persistence 
 Stock deductions for multiple products should use a consistent product ordering to reduce deadlock risk.
 
 ## Alternatives Considered
-
-### Pessimistic Locking
-
-Explicitly lock product records before modifying inventory.
-
-This approach protects concurrent updates but can introduce additional lock waiting and transaction contention.
 
 ### Optimistic Locking
 

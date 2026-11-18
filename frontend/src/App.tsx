@@ -24,7 +24,6 @@ export default function App() {
       <CartProvider>
         <Routes>
           <Route element={<MainLayout />}>
-            <Route path="/cart" element={<CartPage />} />
             <Route path="/" element={<HomePage />} />
             <Route path="/products" element={<ProductCatalogPage />} />
             <Route path="/products/:id" element={<ProductDetailPage />} />
@@ -32,7 +31,6 @@ export default function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/forbidden" element={<ForbiddenPage />} />
-
             <Route element={<ProtectedRoute />}>
               <Route path="/account" element={<AccountPage />} />
               <Route path="/checkout" element={<CheckoutPage />} />
